@@ -2,6 +2,10 @@
 
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)![Dev.to blog](https://img.shields.io/badge/dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white)![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/war100ck/bns-launcher/main/src/assets/images/ragezone.webp" alt="B&S dev" width="20%"/>
+</p>
+
 # 🎮 Blade & Soul Game Launcher (Tauri Edition)
 
 > ⚠️ **ВАЖНОЕ ПРИМЕЧАНИЕ**  
@@ -13,9 +17,6 @@
 > RAGEZONE forum or any related platforms is strictly prohibited.
 
 ---
-<p align="center">
-  <img src="https://raw.githubusercontent.com/war100ck/bns-launcher/main/src/assets/images/ragezone.webp" alt="B&S dev" width="20%"/>
-</p>
 
 ![Blade & Soul Game Launcher](./screen/1.png)
 
