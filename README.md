@@ -14,7 +14,7 @@
 
 ---
 
-![Blade & Soul Game Launcher](./screen/0-1.png)
+![1.](./screen/0-1.png)
 
 ![2.](./screen/2.png)
 
