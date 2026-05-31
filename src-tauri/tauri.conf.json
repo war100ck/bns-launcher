@@ -1,0 +1,40 @@
+{
+  "build": {
+    "devPath": "../src",
+    "distDir": "../src"
+  },
+  "package": {
+    "productName": "BNS Launcher",
+    "version": "1.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "fs": { "all": true, "scope": ["*", "**"] },
+      "http": { "all": true },
+      "shell": { "all": true },
+      "window": { "all": true }
+    },
+    "bundle": {
+      "active": true,
+      "identifier": "com.war100ck.bns.launcher",
+      "icon": ["icons/icon.ico"]
+    },
+    "windows": [{
+      "title": "Blade & Soul Launcher",
+      "label": "main",
+      "width": 1000,
+      "height": 600,
+      "resizable": false,
+      "decorations": false,
+      "center": true,
+      "visible": true,
+      "transparent": false,
+      "fullscreen": false,
+      "alwaysOnTop": false,
+      "skipTaskbar": false
+    }],
+    "security": {
+      "csp": "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';"
+    }
+  }
+}

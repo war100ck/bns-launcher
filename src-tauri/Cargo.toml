@@ -1,0 +1,28 @@
+[package]
+name = "bns-launcher"
+version = "1.0.0"
+edition = "2021"
+authors = ["WAR100CK"]
+description = "Blade & Soul Launcher (Tauri Edition)"
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.6", features = ["fs-all", "http-all", "shell-all", "window-all"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }
+tokio = { version = "1", features = ["rt-multi-thread", "fs", "net", "time", "macros"] }
+winapi = { version = "0.3", features = ["shellapi", "winuser"] }
+base64 = "0.21"
+mime_guess = "2"
+aes = "0.8"
+cbc = { version = "0.1", features = ["alloc"] }
+scrypt = "0.11"
+rand = "0.8"
+hex = "0.4"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
