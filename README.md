@@ -4,13 +4,13 @@
 > Данный лаунчер работает **ТОЛЬКО с приватной версией BNS API**.  
 > Он не совместим с официальными серверами NCSoft и не предназначен для подключения к ним.
 
-Современный, легковесный и высокопроизводительный лаунчер для Blade & Soul, построенный на базе **Tauri v1** (Rust + Vanilla JS/HTML/CSS). Является переосмыслением оригинальной Electron-версии с сохранением всей функциональности и UI/UX, но с кратно меньшим размером дистрибутива и нативной производительностью.
-
----
-
 > Prohibition of RAGEZONE Distribution. Distribution, publication, or sharing
 > of download links to this Software (or its substantial portions) on the
 > RAGEZONE forum or any related platforms is strictly prohibited.
+
+---
+
+Современный, легковесный и высокопроизводительный лаунчер для Blade & Soul, построенный на базе **Tauri v1** (Rust + Vanilla JS/HTML/CSS). Является переосмыслением оригинальной Electron-версии с сохранением всей функциональности и UI/UX, но с кратно меньшим размером дистрибутива и нативной производительностью.
 
 ---
 
