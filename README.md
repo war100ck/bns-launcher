@@ -14,7 +14,7 @@
 
 ---
 <p align="center">
-  <img src="https://raw.githubusercontent.com/war100ck/bns-launcher/main/src/assets/images/ragezone.webp" alt="B&S dev" width="50%"/>
+  <img src="https://raw.githubusercontent.com/war100ck/bns-launcher/main/src/assets/images/ragezone.webp" alt="B&S dev" width="20%"/>
 </p>
 
 ![Blade & Soul Game Launcher](./screen/1.png)
