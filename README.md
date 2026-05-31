@@ -14,6 +14,8 @@
 
 ---
 
+![Blade & Soul Game Launcher](https://raw.githubusercontent.com/war100ck/blade-soul-game-launcher/main/screen/launcher.png)
+
 Современный, легковесный и высокопроизводительный лаунчер для Blade & Soul, построенный на базе **Tauri v1** (Rust + Vanilla JS/HTML/CSS). Является переосмыслением оригинальной Electron-версии с сохранением всей функциональности и UI/UX, но с кратно меньшим размером дистрибутива и нативной производительностью.
 
 ---
