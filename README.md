@@ -1,7 +1,7 @@
 # 🎮 Blade & Soul Game Launcher (Tauri Edition)
 
 > ⚠️ **ВАЖНОЕ ПРИМЕЧАНИЕ**  
-> Данный лаунчер работает **ТОЛЬКО с приватной версией BNS API**.  
+> Данный лаунчер работает **ТОЛЬКО с BNS API**.  
 > Он не совместим с официальными серверами NCSoft и не предназначен для подключения к ним.
 
 > Prohibition of RAGEZONE Distribution. Distribution, publication, or sharing
