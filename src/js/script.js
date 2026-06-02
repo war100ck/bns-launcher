@@ -2,7 +2,16 @@
 let serverAvailable = false;
 let serverCheckInProgress = false;
 let usingLocalData = true;
+let imagesLoaded = 0;
+let totalImagesToLoad = 0;
+let loadStartTime = 0;
 let serverIpCached = '127.0.0.1';
+let launcherData = null;
+let isDataLoaded = false;
+let isRenderingComplete = false;
+let imageCache = new Map();
+let carouselInterval = null;
+let currentSlideIndex = 0;
 let currentLang = localStorage.getItem('launcher_language') || 'ru';
 
 // ========== СИСТЕМА ПЕРЕВОДОВ ==========
@@ -370,7 +379,7 @@ async function loadGameVersion() {
         const architecture = getCurrentArchitecture();
         const version = await tauriInvoke('get_game_version', { architecture });
         const translatedVersion = translateVersionStatus(version);
-        
+
         if (versionElement) {
             versionElement.textContent = `${t('ui.clientVersion')}: ${translatedVersion} (${architecture})`;
             versionElement.style.display = 'block';
@@ -382,7 +391,7 @@ async function loadGameVersion() {
     }
 }
 
-// ========== ПРОВЕРКА СОЕДИНЕНИЯ ==========
+// ========== ПРОВЕРКА СОЕДИНЕНИЯ (ТОЛЬКО для теста API, не блокирует игру) ==========
 async function checkConnection(serverIp) {
     try {
         const alive = await tauriInvoke('check_connection', { serverIp });
@@ -402,61 +411,34 @@ async function checkConnection(serverIp) {
     }
 }
 
-// ========== ЗАПУСК ИГРЫ (ИСПРАВЛЕНО: МГНОВЕННОЕ ЗАКРЫТИЕ) ==========
-// Игнорируем все toast-уведомления: сначала скрываем окно, потом запускаем игру
+// ========== ЗАПУСК ИГРЫ (уведомление + закрытие) ==========
 async function launchGame() {
     const architecture = getCurrentArchitecture();
     const serverIp = document.getElementById('serverIp').value;
 
     console.log(`[LAUNCH] Запуск Client.EXE | arch: ${architecture} | IP: ${serverIp}`);
 
-    // 1. Мгновенно очищаем все toast-уведомления (не ждём их анимации)
-    if (typeof toastr !== 'undefined') {
-        toastr.clear();
-    }
-
     try {
-        // 2. СНАЧАЛА скрываем окно лаунчера (мгновенно, без анимации)
-        // Пользователь не видит никаких уведомлений и ожидания
-        if (window.__TAURI__?.window?.appWindow) {
-            try {
-                await window.__TAURI__.window.appWindow.hide();
-            } catch (hideErr) {
-                console.warn('[LAUNCH] hide() failed:', hideErr);
-            }
-        }
-
-        // 3. Запускаем игру через Rust
         await tauriInvoke('launch_game', { architecture, serverIp });
         
-        console.log('[LAUNCH] Игра запущена, закрываем лаунчер...');
-
-        // 4. Небольшая пауза, чтобы Rust успел передать управление Client.EXE
-        await new Promise(r => setTimeout(r, 300));
-
-        // 5. Закрываем окно полностью
-        if (window.__TAURI__?.window?.appWindow) {
-            try {
-                await window.__TAURI__.window.appWindow.close();
-            } catch (closeErr) {
-                console.warn('[LAUNCH] close() failed, fallback to window.close():', closeErr);
+        // Показываем уведомление об успешном запуске
+        toastr.success(t('toastr.gameLaunched'));
+        
+        // Ждём 1.5 секунды, чтобы пользователь увидел уведомление,
+        // потом плавно скрываем окно и закрываем
+        setTimeout(() => {
+            if (window.__TAURI__?.window?.appWindow) {
+                window.__TAURI__.window.appWindow.hide().then(() => {
+                    setTimeout(() => {
+                        window.__TAURI__.window.appWindow.close().catch(() => window.close());
+                    }, 200);
+                }).catch(() => window.close());
+            } else {
                 window.close();
             }
-        } else {
-            window.close();
-        }
+        }, 1500);
     } catch (e) {
         console.error('[LAUNCH]', e);
-        
-        // Если запуск упал — показываем окно обратно и уведомляем пользователя
-        if (window.__TAURI__?.window?.appWindow) {
-            try {
-                await window.__TAURI__.window.appWindow.show();
-            } catch (showErr) {
-                console.warn('[LAUNCH] show() failed:', showErr);
-            }
-        }
-        
         toastr.error(`${t('toastr.launchError')}: ${e}`);
         playSound('error');
     }
@@ -519,7 +501,6 @@ function hideLoadingBar() {
     if (playBtn) playBtn.classList.add('loading-complete');
     const versionEl = document.getElementById('client-version');
     if (versionEl) versionEl.style.display = 'block';
-
     const mainTextImage = document.getElementById('mainTextImage');
     if (mainTextImage) mainTextImage.src = './assets/images/text-black.webp';
 }
@@ -591,11 +572,13 @@ function bindEvents() {
         }
     });
 
+    // Check Connection — только по нажатию кнопки в настройках (для теста API)
     document.getElementById('checkIpButton')?.addEventListener('click', async () => {
         const ip = document.getElementById('serverIp').value;
         await checkConnection(ip);
     });
 
+    // Соц. иконки
     document.querySelectorAll('.external-link').forEach(icon => {
         icon.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -609,7 +592,7 @@ function bindEvents() {
         });
     });
 
-    // Кнопка "Играть" — мгновенный запуск без ожидания уведомлений
+    // Кнопка "Играть" — ВСЕГДА запускает Client.EXE, без проверок
     document.getElementById('playButton')?.addEventListener('click', async (e) => {
         e.preventDefault();
         await launchGame();
@@ -641,7 +624,7 @@ function bindEvents() {
     document.getElementById('loginButtonSubmit')?.addEventListener('click', signin);
 }
 
-// ========== ИНИЦИАЛИЗАЦИЯ ==========
+// ========== ИНИЦИАЛИЗАЦИЯ (БЕЗ фоновой проверки порта) ==========
 async function initializeLauncher() {
     console.log('[START] ========== ИНИЦИАЛИЗАЦИЯ ЛАУНЧЕРА ==========');
 
@@ -651,10 +634,8 @@ async function initializeLauncher() {
     await loadRegistrationData();
     await loadGameVersion();
 
-    const serverIp = document.getElementById('serverIp').value;
-    if (serverIp) {
-        checkConnection(serverIp);
-    }
+    // Фоновая проверка порта УБРАНА — порт 3000 нужен только для регистрации/входа
+    // Проверка делается только по кнопке "Check Connection" в настройках
 
     setTimeout(hideLoadingBar, 3000);
 }

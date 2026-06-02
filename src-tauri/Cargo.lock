@@ -150,7 +150,7 @@ dependencies = [
 
 [[package]]
 name = "bns-launcher"
-version = "1.0.1"
+version = "1.0.0"
 dependencies = [
  "aes",
  "base64 0.21.7",
