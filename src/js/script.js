@@ -30,7 +30,6 @@ const translations = {
             welcome: 'Добро пожаловать,',
             minimize: 'Свернуть',
             close: 'Закрыть',
-            // Ключи для статусов версии (возвращаются из Rust)
             versionNotFound: 'Не найден',
             versionUnknown: 'Неизвестно'
         },
@@ -88,7 +87,6 @@ const translations = {
             welcome: 'Welcome,',
             minimize: 'Minimize',
             close: 'Close',
-            // Ключи для статусов версии (возвращаются из Rust)
             versionNotFound: 'Not found',
             versionUnknown: 'Unknown'
         },
@@ -143,7 +141,6 @@ function t(key, params = {}) {
     return value.replace(/\{(\w+)\}/g, (_, param) => params[param] || `{${param}}`);
 }
 
-// Функция перевода статусов версии, возвращаемых из Rust
 function translateVersionStatus(version) {
     if (version === 'NOT_FOUND') return t('ui.versionNotFound');
     if (version === 'UNKNOWN') return t('ui.versionUnknown');
@@ -175,7 +172,6 @@ function applyLanguage(lang) {
         if (nickname) updateRegistrationButton(nickname);
     }
 
-    // Перерисовываем версию с учётом нового языка
     const versionEl = document.getElementById('client-version');
     if (versionEl && versionEl.style.display !== 'none') {
         loadGameVersion();
@@ -367,14 +363,12 @@ function updateRegistrationButton(nickname) {
     }
 }
 
-// ========== ВЕРСИЯ ИГРЫ (ИСПРАВЛЕНО: перевод статусов NOT_FOUND/UNKNOWN) ==========
+// ========== ВЕРСИЯ ИГРЫ ==========
 async function loadGameVersion() {
     const versionElement = document.getElementById('client-version');
     try {
         const architecture = getCurrentArchitecture();
         const version = await tauriInvoke('get_game_version', { architecture });
-        
-        // Переводим ключи NOT_FOUND/UNKNOWN на текущий язык
         const translatedVersion = translateVersionStatus(version);
         
         if (versionElement) {
@@ -408,17 +402,61 @@ async function checkConnection(serverIp) {
     }
 }
 
-// ========== ЗАПУСК ИГРЫ ==========
+// ========== ЗАПУСК ИГРЫ (ИСПРАВЛЕНО: МГНОВЕННОЕ ЗАКРЫТИЕ) ==========
+// Игнорируем все toast-уведомления: сначала скрываем окно, потом запускаем игру
 async function launchGame() {
     const architecture = getCurrentArchitecture();
     const serverIp = document.getElementById('serverIp').value;
 
+    console.log(`[LAUNCH] Запуск Client.EXE | arch: ${architecture} | IP: ${serverIp}`);
+
+    // 1. Мгновенно очищаем все toast-уведомления (не ждём их анимации)
+    if (typeof toastr !== 'undefined') {
+        toastr.clear();
+    }
+
     try {
+        // 2. СНАЧАЛА скрываем окно лаунчера (мгновенно, без анимации)
+        // Пользователь не видит никаких уведомлений и ожидания
+        if (window.__TAURI__?.window?.appWindow) {
+            try {
+                await window.__TAURI__.window.appWindow.hide();
+            } catch (hideErr) {
+                console.warn('[LAUNCH] hide() failed:', hideErr);
+            }
+        }
+
+        // 3. Запускаем игру через Rust
         await tauriInvoke('launch_game', { architecture, serverIp });
-        toastr.success(t('toastr.gameLaunched'));
-        setTimeout(() => tauriWindowCommand('close'), 1000);
+        
+        console.log('[LAUNCH] Игра запущена, закрываем лаунчер...');
+
+        // 4. Небольшая пауза, чтобы Rust успел передать управление Client.EXE
+        await new Promise(r => setTimeout(r, 300));
+
+        // 5. Закрываем окно полностью
+        if (window.__TAURI__?.window?.appWindow) {
+            try {
+                await window.__TAURI__.window.appWindow.close();
+            } catch (closeErr) {
+                console.warn('[LAUNCH] close() failed, fallback to window.close():', closeErr);
+                window.close();
+            }
+        } else {
+            window.close();
+        }
     } catch (e) {
         console.error('[LAUNCH]', e);
+        
+        // Если запуск упал — показываем окно обратно и уведомляем пользователя
+        if (window.__TAURI__?.window?.appWindow) {
+            try {
+                await window.__TAURI__.window.appWindow.show();
+            } catch (showErr) {
+                console.warn('[LAUNCH] show() failed:', showErr);
+            }
+        }
+        
         toastr.error(`${t('toastr.launchError')}: ${e}`);
         playSound('error');
     }
@@ -525,7 +563,6 @@ function bindEvents() {
         settingsPage.classList.remove('open');
     });
 
-    // При смене языка перезапрашиваем версию для обновления статуса
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -572,6 +609,7 @@ function bindEvents() {
         });
     });
 
+    // Кнопка "Играть" — мгновенный запуск без ожидания уведомлений
     document.getElementById('playButton')?.addEventListener('click', async (e) => {
         e.preventDefault();
         await launchGame();

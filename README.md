@@ -1,28 +1,16 @@
-![ViewCount](https://hits.sh/github.com/war100ck/bns-launcher.svg?style=flat-square) ![Downloads](https://img.shields.io/github/downloads/war100ck/bns-launcher/total)
-
-![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)![Dev.to blog](https://img.shields.io/badge/dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white)![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/war100ck/bns-launcher/main/src/assets/images/ragezone.webp" alt="B&S dev" width="20%"/>
-</p>
-
 # 🎮 Blade & Soul Game Launcher (Tauri Edition)
 
 > ⚠️ **ВАЖНОЕ ПРИМЕЧАНИЕ**  
-> Данный лаунчер работает **ТОЛЬКО с BNS API**.  
+> Данный лаунчер работает **ТОЛЬКО с приватной версией BNS API**.  
 > Он не совместим с официальными серверами NCSoft и не предназначен для подключения к ним.
+
+Современный, легковесный и высокопроизводительный лаунчер для Blade & Soul, построенный на базе **Tauri v1** (Rust + Vanilla JS/HTML/CSS). Является переосмыслением оригинальной Electron-версии с сохранением всей функциональности и UI/UX, но с кратно меньшим размером дистрибутива и нативной производительностью.
+
+---
 
 > Prohibition of RAGEZONE Distribution. Distribution, publication, or sharing
 > of download links to this Software (or its substantial portions) on the
 > RAGEZONE forum or any related platforms is strictly prohibited.
-
----
-
-![Blade & Soul Game Launcher](./screen/1.png)
-
-![2.](./screen/2.png)
-
-Современный, легковесный и высокопроизводительный лаунчер для Blade & Soul, построенный на базе **Tauri v1** (Rust + Vanilla JS/HTML/CSS). Является переосмыслением оригинальной Electron-версии с сохранением всей функциональности и UI/UX, но с кратно меньшим размером дистрибутива и нативной производительностью.
 
 ---
 
@@ -138,7 +126,7 @@ bns-launcher/
 ### 1. Клонирование репозитория
 
 ```bash
-git clone https://github.com/war100ck/bns-launcher.git
+git clone <your-repo-url>
 cd bns-launcher
 ```
 
