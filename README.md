@@ -138,7 +138,7 @@ bns-launcher/
 ### 1. Клонирование репозитория
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/war100ck/bns-launcher.git
 cd bns-launcher
 ```
 
